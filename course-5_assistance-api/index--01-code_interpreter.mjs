@@ -4,7 +4,7 @@ import path from 'path'
 
 dotenv.config({ path: path.resolve('./.env') });
 
-const openai = new OpenAI();
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // Step 1: Create an Assistant
 
@@ -13,7 +13,12 @@ const assistant = await openai.beta.assistants.create({
         "You are a personal math tutor. When asked a question, write and run Python code to answer the question.",
     name: "Math Tutor",
     tools: [{ type: "code_interpreter" }],
-    model: "gpt-4-turbo",
+    // tool_resources: {
+    //     "code_interpreter": {
+    //         "file_ids": [file.id] // May Be .CSV File For Analysis.
+    //     }
+    // },
+    model: "gpt-4-turbo"
 });
 
 
@@ -32,6 +37,21 @@ const thread = await openai.beta.threads.create();
 //         content: "How does AI work? Explain it in simple terms.",
 //       },
 //     ],
+//   });
+
+// const thread = await openai.beta.threads.create({
+//     messages: [
+//       {
+//         "role": "user",
+//         "content": "Create 3 data visualizations based on the trends in this file.",
+//         "attachments": [
+//           {
+//             file_id: file.id,
+//             tools: [{type: "code_interpreter"}]
+//           }
+//         ]
+//       }
+//     ]
 //   });
 
 // Step 3: Add a Message to the Thread

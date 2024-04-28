@@ -5,7 +5,7 @@ import fs from 'fs'
 
 dotenv.config({ path: path.resolve('./.env') });
 
-const openai = new OpenAI();
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // Upload a file with an "assistants" purpose
 const file = await openai.files.create({
@@ -13,24 +13,27 @@ const file = await openai.files.create({
     purpose: "assistants",
 });
 
+const vectorStore = await openai.beta.vectorStores.create({
+    name: "Movie Details - RAG Store",
+    file_ids: [file.id]
+});
+
 // Create Movie Expert Assistant
 const assistant = await openai.beta.assistants.create({
-    instructions: "You are great at recommending movies. When asked a question, use the information in the provided file to form a friendly response. If you cannot find the answer in the file, do your best to infer what the answer should be.",
+    instructions: `You are great at recommending movies. When asked a question, use the information in the provided file to form a friendly response.
+                    If you cannot find the answer in the file, do your best to infer what the answer should be.`,
     name: "Movie Expert",
-    tools: [{ type: "retrieval" }],
-    model: "gpt-4-1106-preview",
-    file_ids: [file.id]
+    tools: [{ type: "file_search" }],
+    model: "gpt-3.5-turbo",
+    tool_resources: {
+        "file_search": {
+            "vector_store_ids": [vectorStore.id]
+        }
+    }
 });
 
 // Create a thread
 const thread = await openai.beta.threads.create();
-
-
-// Create a message for the threa
-const threadMessages = await openai.beta.threads.messages.create(
-    thread.id,
-    { role: "user", content: "Can you recommend a comedy movie?" }
-);
 
 const run = await openai.beta.threads.runs.createAndPoll(
     thread.id,
