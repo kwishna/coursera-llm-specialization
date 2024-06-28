@@ -46,5 +46,5 @@ for (const obj of inputs) {
     });
     console.log(response.choices[0]);
 
-    // document.body.innerHTML = `<img src="${imgURL}" alt="Image to analyze">`;
+    document.body.innerHTML = `<img src="${imgURL}" alt="Image to analyze">`;
 }
