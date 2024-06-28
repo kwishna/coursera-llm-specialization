@@ -5,7 +5,7 @@ import path from 'path'
 dotenv.config({ path: path.resolve('./.env') });
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+    apiKey: process.env.OPENAI_API_KEY
 });
 
 const inputs = [
@@ -24,27 +24,28 @@ const inputs = [
 ]
 
 for (const obj of inputs) {
-    const imgURL = obj.img_url;
-    const prompt = obj.prompt;
 
-    const response = await openai.chat.completions.create({
-    model: "gpt-4o",
-    messages: [
-        {
-        role: "user",
-        content: [
-            { type: "text", text: prompt },
-            {
-            type: "image_url",
-            image_url: {
-                url: imgURL
-            }
-            }
-        ]
-        }
-    ]
-    });
-    console.log(response.choices[0]);
+        const imgURL = obj.img_url;
+        const prompt = obj.prompt;
 
-    document.body.innerHTML = `<img src="${imgURL}" alt="Image to analyze">`;
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o",
+            messages: [
+                {
+                    role: "user",
+                    content: [
+                        { type: "text", text: prompt },
+                        {
+                            type: "image_url",
+                            image_url: {
+                                url: imgURL
+                            }
+                        }
+                    ]
+                }
+            ]
+        });
+        console.log("---------------------------------------------------------------------------------------------------------------------------");
+        console.log(imgURL);
+        console.log(response.choices[0].message.content);
 }
