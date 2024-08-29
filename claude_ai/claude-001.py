@@ -38,7 +38,7 @@ message = client.messages.create(
             "content": [
                 {
                     "type": "text",
-                    "text": "Sure! I will analyze the image and generate a response based on the prompt."
+                    "text": "Sure! I will analyze the image and convert the information in JSON format."
                 }
             ]
         },
